@@ -9,5 +9,6 @@
   { "name": "Fever Case", "price": 2, "armoryId": 1025083006 },
   { "name": "2025 Community Sticker", "price": 1, "armoryId": 2332851919 },
   { "name": "Sugarface 2 Sticker", "price": 1, "armoryId": 1531224355 },
-  { "name": "Elemental Craft Stickers", "price": 1, "armoryId": 594200331 }
+  { "name": "Elemental Craft Stickers", "price": 1, "armoryId": 594200331 },
+  { "name": "AK-47 | Aphrodite", "price": 125, "armoryId": 508216210 }
 ]

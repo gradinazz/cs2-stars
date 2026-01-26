@@ -61,7 +61,7 @@ function clearScreen() {
 function banner() {
     clearScreen();
     console.log('╔════════════════════════════════════════════════════════════════╗');
-    console.log('║               CS2 STARS SHOP MANAGER v1.0                      ║');
+    console.log('║               CS2 STARS SHOP MANAGER v1.1                      ║');
     console.log('╚════════════════════════════════════════════════════════════════╝');
     console.log('');
 }
@@ -442,14 +442,25 @@ async function buyFlow(rl, username, items) {
         if (!/^y(es)?$/i.test(confirm)) continue;
 
         console.log('');
-        console.log(`${ICONS.loading} Покупка...`);
+        console.log(`\n${ICONS.loading} Подключение к Steam...`);
+
+        // Создаем постоянное подключение
+        try {
+            await ArmoryManager.createConnection(username);
+        } catch (e) {
+            console.log(`${ICONS.error} Ошибка подключения: ${e?.message || e}`);
+            await ask(rl, '\nНажмите Enter для продолжения...');
+            continue;
+        }
+
+        console.log(`${ICONS.loading} Покупка ${qty} предметов...`);
 
         let starsLeft = currentStars;
         const results = [];
 
         for (let i = 0; i < qty; i++) {
             try {
-                const r = await ArmoryManager.purchaseItem(username, item.armoryId, starsLeft, item.price);
+                const r = await ArmoryManager.purchaseItem(item.armoryId, starsLeft, item.price);
                 starsLeft = r?.newStars ?? starsLeft - item.price;
 
                 const itemInfo = parseItemFromGC(r?.item);
@@ -460,6 +471,7 @@ async function buyFlow(rl, username, items) {
                 if (itemInfo.paintSeed !== null && itemInfo.type === 'weapon') line += ` | Seed: ${itemInfo.paintSeed}`;
 
                 console.log(`${ICONS.success} #${i + 1}: ${line}, осталось ${starsLeft}${ICONS.star}`);
+                await wait(1000); // Уменьшена задержка до 1 секунды
             } catch (e) {
                 const msg = e?.message || String(e);
 
@@ -475,7 +487,9 @@ async function buyFlow(rl, username, items) {
             }
         }
 
-        console.log('');
+        // Закрываем подключение после всех покупок
+        ArmoryManager.disconnectSession();
+
         console.log('═══════════════════ РЕЗУЛЬТАТ ═══════════════════');
         console.log(`Аккаунт: ${username}`);
         console.log(`Товар: ${item.name}`);
