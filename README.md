@@ -1,4 +1,4 @@
-# CS2 Armory Shop Manager
+# CS2 STARS SHOP MANAGER 
 
 ![Screenshot](screen.jpg)
 
